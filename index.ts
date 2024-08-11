@@ -2,20 +2,19 @@ import { Hono } from 'hono'
 import { jwtVerify, createRemoteJWKSet } from 'jose'
 
 // グローバル定数
-const AUTH_ENDPOINT = 'https://accounts.google.com/o/oauth2/v2/auth'
-const TOKEN_ENDPOINT = 'https://www.googleapis.com/oauth2/v4/token'
+const AUTH_ENDPOINT     = 'https://accounts.google.com/o/oauth2/v2/auth'
+const TOKEN_ENDPOINT    = 'https://www.googleapis.com/oauth2/v4/token'
 const USERINFO_ENDPOINT = 'https://www.googleapis.com/oauth2/v3/userinfo'
-const JWKS_URI = 'https://www.googleapis.com/oauth2/v3/certs'
-
-const REDIRECT_URI = 'http://127.0.0.1:3333/callback'
-const CLIENT_ID = 'YOUR_CLIENT_ID'
-const CLIENT_SECRET = 'YOUR_CLIENT_SECRET'
+const JWKS_URI          = 'https://www.googleapis.com/oauth2/v3/certs'
+const REDIRECT_URI      = 'http://127.0.0.1:3333/callback'
+const CLIENT_ID         = 'YOUR_CLIENT_ID'
+const CLIENT_SECRET     = 'YOUR_CLIENT_SECRET'
 
 const app = new Hono()
 
 // 認証用ページ
 app.get('/auth', (c) => {
-  // 認可リクエストを構築
+  // 認証リクエストを構築
   const responseType = 'code'
   const scope = encodeURIComponent('openid https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile')
   const authUrl = `${AUTH_ENDPOINT}?response_type=${responseType}&client_id=${encodeURIComponent(CLIENT_ID)}&redirect_uri=${encodeURIComponent(REDIRECT_URI)}&scope=${scope}`
@@ -53,22 +52,22 @@ app.get('/callback', async (c) => {
   const tokenData = await tokenResponse.json()
   console.log('Token response:', tokenData) 
 
-  // IDトークンの存在確認
+  // ID トークンの存在確認
   if (!tokenData.id_token) {
     return c.text('Failed to obtain ID token', 400)
   }
 
-  // IDトークンの検証
+  // ID トークンの検証
   const idToken = tokenData.id_token
 
   try {
-    // JWKS URIを使ってリモートからキーセットを取得
+    // JWKS URI を使ってリモートからキーセットを取得
     const JWKS = createRemoteJWKSet(new URL(JWKS_URI))
   
-    // IDトークンを検証
+    // ID トークンを検証
     const { payload } = await jwtVerify(idToken, JWKS, {
       issuer: 'https://accounts.google.com', // 発行者の確認
-      audience: CLIENT_ID, // クライアントIDの確認
+      audience: CLIENT_ID, // クライアント ID の確認
     })
     console.log('ID Token verified successfully:', payload) // トークンのペイロードを確認
   } catch (error) {
