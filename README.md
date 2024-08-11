@@ -6,7 +6,7 @@
     $ bun install
     ```
 
-2. **コード上の以下のクライアント ID とクライアントシークレットを自身のものに変更する**
+2. **index.ts の以下のクライアント ID とクライアントシークレットを自身のものに変更する**
 
     ```text
     const CLIENT_ID         = 'YOUR_CLIENT_ID'
