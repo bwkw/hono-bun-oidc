@@ -57,14 +57,12 @@ app.get('/callback', async (c) => {
     return c.text('Failed to obtain ID token', 400)
   }
 
-  // ID トークンの検証
-  const idToken = tokenData.id_token
-
   try {
     // JWKS URI を使ってリモートからキーセットを取得
     const JWKS = createRemoteJWKSet(new URL(JWKS_URI))
   
     // ID トークンを検証
+    const idToken = tokenData.id_token
     const { payload } = await jwtVerify(idToken, JWKS, {
       issuer: 'https://accounts.google.com', // 発行者の確認
       audience: CLIENT_ID, // クライアント ID の確認
