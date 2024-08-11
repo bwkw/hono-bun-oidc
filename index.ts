@@ -92,3 +92,5 @@ export default {
   port: 3333, 
   fetch: app.fetch, 
 }
+
+console.log('Open http://127.0.0.1:3333/auth')
